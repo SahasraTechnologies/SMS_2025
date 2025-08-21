@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.12.35527.113 d17.12
+VisualStudioVersion = 17.12.35527.113
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SMS.UI", "src\SMS.UI\SMS.UI.csproj", "{8FB526FE-BF23-4CF5-829A-E379A1724EFD}"
 EndProject
@@ -10,6 +10,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SMS.Models", "src\SMS.Models\SMS.Models.csproj", "{68516911-BE8E-4CA0-AA51-EA37CB12554F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SMS.Console", "src\SMS.Console\SMS.Console.csproj", "{B81776BC-05AC-4B6B-ADD7-C610EB6E10A2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SMS.Entities", "src\SMS.Entities\SMS.Entities.csproj", "{F23799F0-27E7-4E85-8E69-B417EDB8EFD8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{B81776BC-05AC-4B6B-ADD7-C610EB6E10A2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B81776BC-05AC-4B6B-ADD7-C610EB6E10A2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B81776BC-05AC-4B6B-ADD7-C610EB6E10A2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F23799F0-27E7-4E85-8E69-B417EDB8EFD8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F23799F0-27E7-4E85-8E69-B417EDB8EFD8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F23799F0-27E7-4E85-8E69-B417EDB8EFD8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F23799F0-27E7-4E85-8E69-B417EDB8EFD8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

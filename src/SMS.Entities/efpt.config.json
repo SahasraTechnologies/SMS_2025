@@ -1,0 +1,89 @@
+﻿{
+   "CodeGenerationMode": 5,
+   "ContextClassName": "SmsContext",
+   "ContextNamespace": null,
+   "FilterSchemas": false,
+   "IncludeConnectionString": false,
+   "ModelNamespace": null,
+   "OutputContextPath": null,
+   "OutputPath": "Models",
+   "PreserveCasingWithRegex": true,
+   "ProjectRootNamespace": "SMS.Entities",
+   "Schemas": null,
+   "SelectedHandlebarsLanguage": 2,
+   "SelectedToBeGenerated": 0,
+   "T4TemplatePath": null,
+   "Tables": [
+      {
+         "Name": "[asms].[Assessment]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[asms].[Attendance]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[asms].[ClassSection]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[asms].[Course]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[asms].[Enrollment]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[asms].[Grade]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[asms].[Guardian]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[asms].[Staff]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[asms].[Student]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[asms].[StudentGuardian]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[asms].[Term]",
+         "ObjectType": 0
+      }
+   ],
+   "UiHint": null,
+   "UncountableWords": null,
+   "UseAsyncStoredProcedureCalls": true,
+   "UseBoolPropertiesWithoutDefaultSql": false,
+   "UseDatabaseNames": false,
+   "UseDatabaseNamesForRoutines": true,
+   "UseDateOnlyTimeOnly": false,
+   "UseDbContextSplitting": false,
+   "UseDecimalDataAnnotationForSprocResult": true,
+   "UseFluentApiOnly": true,
+   "UseHandleBars": false,
+   "UseHierarchyId": false,
+   "UseInflector": true,
+   "UseInternalAccessModifiersForSprocsAndFunctions": false,
+   "UseLegacyPluralizer": false,
+   "UseManyToManyEntity": false,
+   "UseNoDefaultConstructor": false,
+   "UseNoNavigations": false,
+   "UseNoObjectFilter": false,
+   "UseNodaTime": false,
+   "UseNullableReferences": false,
+   "UsePrefixNavigationNaming": false,
+   "UseSchemaFolders": false,
+   "UseSchemaNamespaces": false,
+   "UseSpatial": false,
+   "UseT4": false,
+   "UseT4Split": false
+}
