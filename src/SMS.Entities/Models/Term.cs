@@ -17,11 +17,19 @@ public partial class Term
 
     public bool IsActive { get; set; }
 
-    public DateTime CreatedAt { get; set; }
+    public DateTime CreatedAtUtc { get; set; }
 
-    public DateTime? UpdatedAt { get; set; }
+    public DateTime? UpdatedAtUtc { get; set; }
+
+    public int? CreatedByUserId { get; set; }
+
+    public int? UpdatedByUserId { get; set; }
 
     public byte[] RowVersion { get; set; }
 
     public virtual ICollection<ClassSection> ClassSections { get; set; } = new List<ClassSection>();
+
+    public virtual AppUser CreatedByUser { get; set; }
+
+    public virtual AppUser UpdatedByUser { get; set; }
 }

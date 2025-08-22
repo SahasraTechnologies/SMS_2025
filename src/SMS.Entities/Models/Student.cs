@@ -25,17 +25,29 @@ public partial class Student
 
     public bool IsActive { get; set; }
 
-    public DateTime CreatedAt { get; set; }
+    public int? UserId { get; set; }
 
-    public DateTime? UpdatedAt { get; set; }
+    public DateTime CreatedAtUtc { get; set; }
+
+    public DateTime? UpdatedAtUtc { get; set; }
+
+    public int? CreatedByUserId { get; set; }
+
+    public int? UpdatedByUserId { get; set; }
 
     public byte[] RowVersion { get; set; }
 
     public virtual ICollection<Attendance> Attendances { get; set; } = new List<Attendance>();
+
+    public virtual AppUser CreatedByUser { get; set; }
 
     public virtual ICollection<Enrollment> Enrollments { get; set; } = new List<Enrollment>();
 
     public virtual ICollection<Grade> Grades { get; set; } = new List<Grade>();
 
     public virtual ICollection<StudentGuardian> StudentGuardians { get; set; } = new List<StudentGuardian>();
+
+    public virtual AppUser UpdatedByUser { get; set; }
+
+    public virtual AppUser User { get; set; }
 }

@@ -17,9 +17,21 @@ public partial class StudentGuardian
 
     public bool IsPrimary { get; set; }
 
-    public DateTime CreatedAt { get; set; }
+    public DateTime CreatedAtUtc { get; set; }
+
+    public DateTime? UpdatedAtUtc { get; set; }
+
+    public int? CreatedByUserId { get; set; }
+
+    public int? UpdatedByUserId { get; set; }
+
+    public byte[] RowVersion { get; set; }
+
+    public virtual AppUser CreatedByUser { get; set; }
 
     public virtual Guardian Guardian { get; set; }
 
     public virtual Student Student { get; set; }
+
+    public virtual AppUser UpdatedByUser { get; set; }
 }

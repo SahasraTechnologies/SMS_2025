@@ -15,48 +15,84 @@
    "T4TemplatePath": null,
    "Tables": [
       {
-         "Name": "[asms].[Assessment]",
+         "Name": "[dbo].[AppUser]",
          "ObjectType": 0
       },
       {
-         "Name": "[asms].[Attendance]",
+         "Name": "[dbo].[Assessment]",
          "ObjectType": 0
       },
       {
-         "Name": "[asms].[ClassSection]",
+         "Name": "[dbo].[Attendance]",
          "ObjectType": 0
       },
       {
-         "Name": "[asms].[Course]",
+         "Name": "[dbo].[ClassSection]",
          "ObjectType": 0
       },
       {
-         "Name": "[asms].[Enrollment]",
+         "Name": "[dbo].[Course]",
          "ObjectType": 0
       },
       {
-         "Name": "[asms].[Grade]",
+         "Name": "[dbo].[Enrollment]",
          "ObjectType": 0
       },
       {
-         "Name": "[asms].[Guardian]",
+         "Name": "[dbo].[Grade]",
          "ObjectType": 0
       },
       {
-         "Name": "[asms].[Staff]",
+         "Name": "[dbo].[Guardian]",
          "ObjectType": 0
       },
       {
-         "Name": "[asms].[Student]",
+         "Name": "[dbo].[Role]",
          "ObjectType": 0
       },
       {
-         "Name": "[asms].[StudentGuardian]",
+         "Name": "[dbo].[Staff]",
          "ObjectType": 0
       },
       {
-         "Name": "[asms].[Term]",
+         "Name": "[dbo].[Student]",
          "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[StudentGuardian]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[Term]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[UserRole]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[vw_UserPersonLinks]",
+         "ObjectType": 3
+      },
+      {
+         "Name": "[dbo].[usp_AssignRole]",
+         "ObjectType": 1
+      },
+      {
+         "Name": "[dbo].[usp_CreateUser]",
+         "ObjectType": 1
+      },
+      {
+         "Name": "[dbo].[usp_LinkUserToGuardian]",
+         "ObjectType": 1
+      },
+      {
+         "Name": "[dbo].[usp_LinkUserToStaff]",
+         "ObjectType": 1
+      },
+      {
+         "Name": "[dbo].[usp_LinkUserToStudent]",
+         "ObjectType": 1
       }
    ],
    "UiHint": null,
