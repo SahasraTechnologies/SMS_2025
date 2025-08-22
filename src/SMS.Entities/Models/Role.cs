@@ -5,21 +5,13 @@ using System.Collections.Generic;
 
 namespace SMS.Entities.Models;
 
-public partial class Assessment
+public partial class Role
 {
-    public int AssessmentId { get; set; }
-
-    public int SectionId { get; set; }
+    public int RoleId { get; set; }
 
     public string Name { get; set; }
 
-    public string Type { get; set; }
-
-    public decimal MaxPoints { get; set; }
-
-    public decimal? WeightPercent { get; set; }
-
-    public DateTime? DueDate { get; set; }
+    public bool IsActive { get; set; }
 
     public DateTime CreatedAtUtc { get; set; }
 
@@ -33,9 +25,7 @@ public partial class Assessment
 
     public virtual AppUser CreatedByUser { get; set; }
 
-    public virtual ICollection<Grade> Grades { get; set; } = new List<Grade>();
-
-    public virtual ClassSection Section { get; set; }
-
     public virtual AppUser UpdatedByUser { get; set; }
+
+    public virtual ICollection<UserRole> UserRoles { get; set; } = new List<UserRole>();
 }

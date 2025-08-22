@@ -19,11 +19,23 @@ public partial class Attendance
 
     public string Remarks { get; set; }
 
-    public DateTime RecordedAt { get; set; }
+    public DateTime RecordedAtUtc { get; set; }
+
+    public DateTime CreatedAtUtc { get; set; }
+
+    public DateTime? UpdatedAtUtc { get; set; }
+
+    public int? CreatedByUserId { get; set; }
+
+    public int? UpdatedByUserId { get; set; }
 
     public byte[] RowVersion { get; set; }
+
+    public virtual AppUser CreatedByUser { get; set; }
 
     public virtual ClassSection Section { get; set; }
 
     public virtual Student Student { get; set; }
+
+    public virtual AppUser UpdatedByUser { get; set; }
 }

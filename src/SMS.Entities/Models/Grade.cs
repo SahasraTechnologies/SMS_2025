@@ -15,13 +15,25 @@ public partial class Grade
 
     public decimal PointsEarned { get; set; }
 
-    public DateTime GradedAt { get; set; }
+    public DateTime GradedAtUtc { get; set; }
 
     public string Feedback { get; set; }
+
+    public DateTime CreatedAtUtc { get; set; }
+
+    public DateTime? UpdatedAtUtc { get; set; }
+
+    public int? CreatedByUserId { get; set; }
+
+    public int? UpdatedByUserId { get; set; }
 
     public byte[] RowVersion { get; set; }
 
     public virtual Assessment Assessment { get; set; }
 
+    public virtual AppUser CreatedByUser { get; set; }
+
     public virtual Student Student { get; set; }
+
+    public virtual AppUser UpdatedByUser { get; set; }
 }

@@ -23,9 +23,13 @@ public partial class ClassSection
 
     public bool IsActive { get; set; }
 
-    public DateTime CreatedAt { get; set; }
+    public DateTime CreatedAtUtc { get; set; }
 
-    public DateTime? UpdatedAt { get; set; }
+    public DateTime? UpdatedAtUtc { get; set; }
+
+    public int? CreatedByUserId { get; set; }
+
+    public int? UpdatedByUserId { get; set; }
 
     public byte[] RowVersion { get; set; }
 
@@ -35,9 +39,13 @@ public partial class ClassSection
 
     public virtual Course Course { get; set; }
 
+    public virtual AppUser CreatedByUser { get; set; }
+
     public virtual ICollection<Enrollment> Enrollments { get; set; } = new List<Enrollment>();
 
     public virtual Staff Teacher { get; set; }
 
     public virtual Term Term { get; set; }
+
+    public virtual AppUser UpdatedByUser { get; set; }
 }

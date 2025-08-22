@@ -13,6 +13,8 @@ public partial class SmsContext : DbContext
     {
     }
 
+    public virtual DbSet<AppUser> AppUsers { get; set; }
+
     public virtual DbSet<Assessment> Assessments { get; set; }
 
     public virtual DbSet<Attendance> Attendances { get; set; }
@@ -27,6 +29,8 @@ public partial class SmsContext : DbContext
 
     public virtual DbSet<Guardian> Guardians { get; set; }
 
+    public virtual DbSet<Role> Roles { get; set; }
+
     public virtual DbSet<Staff> Staff { get; set; }
 
     public virtual DbSet<Student> Students { get; set; }
@@ -35,17 +39,63 @@ public partial class SmsContext : DbContext
 
     public virtual DbSet<Term> Terms { get; set; }
 
+    public virtual DbSet<UserRole> UserRoles { get; set; }
+
+    public virtual DbSet<VwUserPersonLink> VwUserPersonLinks { get; set; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<AppUser>(entity =>
+        {
+            entity.HasKey(e => e.UserId);
+
+            entity.ToTable("AppUser");
+
+            entity.HasIndex(e => e.Email, "IX_AppUser_Email_UQ")
+                .IsUnique()
+                .HasFilter("([Email] IS NOT NULL)");
+
+            entity.HasIndex(e => e.Username, "UQ_AppUser_Username").IsUnique();
+
+            entity.Property(e => e.CreatedAtUtc)
+                .HasPrecision(0)
+                .HasDefaultValueSql("(sysutcdatetime())");
+            entity.Property(e => e.Email).HasMaxLength(256);
+            entity.Property(e => e.IsActive).HasDefaultValue(true);
+            entity.Property(e => e.LastLoginAtUtc).HasPrecision(0);
+            entity.Property(e => e.PasswordAlg).HasMaxLength(40);
+            entity.Property(e => e.PasswordHash).HasMaxLength(512);
+            entity.Property(e => e.PasswordSalt).HasMaxLength(128);
+            entity.Property(e => e.Phone).HasMaxLength(30);
+            entity.Property(e => e.RowVersion)
+                .IsRequired()
+                .IsRowVersion()
+                .IsConcurrencyToken();
+            entity.Property(e => e.UpdatedAtUtc).HasPrecision(0);
+            entity.Property(e => e.Username)
+                .IsRequired()
+                .HasMaxLength(100);
+
+            entity.HasOne(d => d.CreatedByUser).WithMany(p => p.InverseCreatedByUser)
+                .HasForeignKey(d => d.CreatedByUserId)
+                .HasConstraintName("FK_AppUser_CreatedBy");
+
+            entity.HasOne(d => d.UpdatedByUser).WithMany(p => p.InverseUpdatedByUser)
+                .HasForeignKey(d => d.UpdatedByUserId)
+                .HasConstraintName("FK_AppUser_UpdatedBy");
+        });
+
         modelBuilder.Entity<Assessment>(entity =>
         {
-            entity.HasKey(e => e.AssessmentId).HasName("PK__Assessme__3D2BF81E00623B11");
+            entity.HasKey(e => e.AssessmentId).HasName("PK__Assessme__3D2BF81E158F94A3");
 
-            entity.ToTable("Assessment", "asms");
+            entity.ToTable("Assessment");
 
-            entity.HasIndex(e => new { e.SectionId, e.Name }, "UQ_Assessment").IsUnique();
+            entity.HasIndex(e => e.SectionId, "IX_Assessment_Section");
 
-            entity.Property(e => e.CreatedAt)
+            entity.HasIndex(e => new { e.SectionId, e.Name }, "UQ_Asmt").IsUnique();
+
+            entity.Property(e => e.CreatedAtUtc)
                 .HasPrecision(0)
                 .HasDefaultValueSql("(sysutcdatetime())");
             entity.Property(e => e.DueDate).HasPrecision(0);
@@ -60,25 +110,38 @@ public partial class SmsContext : DbContext
             entity.Property(e => e.Type)
                 .IsRequired()
                 .HasMaxLength(40);
-            entity.Property(e => e.UpdatedAt).HasPrecision(0);
+            entity.Property(e => e.UpdatedAtUtc).HasPrecision(0);
             entity.Property(e => e.WeightPercent).HasColumnType("decimal(5, 2)");
+
+            entity.HasOne(d => d.CreatedByUser).WithMany(p => p.AssessmentCreatedByUsers)
+                .HasForeignKey(d => d.CreatedByUserId)
+                .HasConstraintName("FK_Asmt_CreatedBy");
 
             entity.HasOne(d => d.Section).WithMany(p => p.Assessments)
                 .HasForeignKey(d => d.SectionId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_Assessment_Section");
+                .HasConstraintName("FK_Asmt_Section");
+
+            entity.HasOne(d => d.UpdatedByUser).WithMany(p => p.AssessmentUpdatedByUsers)
+                .HasForeignKey(d => d.UpdatedByUserId)
+                .HasConstraintName("FK_Asmt_UpdatedBy");
         });
 
         modelBuilder.Entity<Attendance>(entity =>
         {
-            entity.HasKey(e => e.AttendanceId).HasName("PK__Attendan__8B69261C747D33A0");
+            entity.HasKey(e => e.AttendanceId).HasName("PK__Attendan__8B69261CAAC77D61");
 
-            entity.ToTable("Attendance", "asms");
+            entity.ToTable("Attendance");
 
-            entity.HasIndex(e => new { e.SectionId, e.StudentId, e.AttendanceDate }, "UQ_Attendance").IsUnique();
+            entity.HasIndex(e => new { e.SectionId, e.AttendanceDate }, "IX_Attendance_SectionDt");
+
+            entity.HasIndex(e => new { e.SectionId, e.StudentId, e.AttendanceDate }, "UQ_Att").IsUnique();
 
             entity.Property(e => e.AttendanceDate).HasColumnType("date");
-            entity.Property(e => e.RecordedAt)
+            entity.Property(e => e.CreatedAtUtc)
+                .HasPrecision(0)
+                .HasDefaultValueSql("(sysutcdatetime())");
+            entity.Property(e => e.RecordedAtUtc)
                 .HasPrecision(0)
                 .HasDefaultValueSql("(sysutcdatetime())");
             entity.Property(e => e.Remarks).HasMaxLength(300);
@@ -89,27 +152,36 @@ public partial class SmsContext : DbContext
             entity.Property(e => e.Status)
                 .IsRequired()
                 .HasMaxLength(15);
+            entity.Property(e => e.UpdatedAtUtc).HasPrecision(0);
+
+            entity.HasOne(d => d.CreatedByUser).WithMany(p => p.AttendanceCreatedByUsers)
+                .HasForeignKey(d => d.CreatedByUserId)
+                .HasConstraintName("FK_Att_CreatedBy");
 
             entity.HasOne(d => d.Section).WithMany(p => p.Attendances)
                 .HasForeignKey(d => d.SectionId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_Attendance_Section");
+                .HasConstraintName("FK_Att_Section");
 
             entity.HasOne(d => d.Student).WithMany(p => p.Attendances)
                 .HasForeignKey(d => d.StudentId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_Attendance_Student");
+                .HasConstraintName("FK_Att_Student");
+
+            entity.HasOne(d => d.UpdatedByUser).WithMany(p => p.AttendanceUpdatedByUsers)
+                .HasForeignKey(d => d.UpdatedByUserId)
+                .HasConstraintName("FK_Att_UpdatedBy");
         });
 
         modelBuilder.Entity<ClassSection>(entity =>
         {
-            entity.HasKey(e => e.SectionId).HasName("PK__ClassSec__80EF08725D451D17");
+            entity.HasKey(e => e.SectionId).HasName("PK__ClassSec__80EF08729BC7F6F9");
 
-            entity.ToTable("ClassSection", "asms");
+            entity.ToTable("ClassSection");
 
             entity.HasIndex(e => new { e.CourseId, e.TermId, e.SectionCode }, "UQ_ClassSection").IsUnique();
 
-            entity.Property(e => e.CreatedAt)
+            entity.Property(e => e.CreatedAtUtc)
                 .HasPrecision(0)
                 .HasDefaultValueSql("(sysutcdatetime())");
             entity.Property(e => e.IsActive).HasDefaultValue(true);
@@ -121,36 +193,44 @@ public partial class SmsContext : DbContext
             entity.Property(e => e.SectionCode)
                 .IsRequired()
                 .HasMaxLength(30);
-            entity.Property(e => e.UpdatedAt).HasPrecision(0);
+            entity.Property(e => e.UpdatedAtUtc).HasPrecision(0);
 
             entity.HasOne(d => d.Course).WithMany(p => p.ClassSections)
                 .HasForeignKey(d => d.CourseId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_ClassSection_Course");
+                .HasConstraintName("FK_CS_Course");
+
+            entity.HasOne(d => d.CreatedByUser).WithMany(p => p.ClassSectionCreatedByUsers)
+                .HasForeignKey(d => d.CreatedByUserId)
+                .HasConstraintName("FK_CS_CreatedBy");
 
             entity.HasOne(d => d.Teacher).WithMany(p => p.ClassSections)
                 .HasForeignKey(d => d.TeacherId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_ClassSection_Teacher");
+                .HasConstraintName("FK_CS_Teacher");
 
             entity.HasOne(d => d.Term).WithMany(p => p.ClassSections)
                 .HasForeignKey(d => d.TermId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_ClassSection_Term");
+                .HasConstraintName("FK_CS_Term");
+
+            entity.HasOne(d => d.UpdatedByUser).WithMany(p => p.ClassSectionUpdatedByUsers)
+                .HasForeignKey(d => d.UpdatedByUserId)
+                .HasConstraintName("FK_CS_UpdatedBy");
         });
 
         modelBuilder.Entity<Course>(entity =>
         {
-            entity.HasKey(e => e.CourseId).HasName("PK__Course__C92D71A7E6B29605");
+            entity.HasKey(e => e.CourseId).HasName("PK__Course__C92D71A7908A0EB9");
 
-            entity.ToTable("Course", "asms");
+            entity.ToTable("Course");
 
             entity.HasIndex(e => e.CourseCode, "UQ_Course_CourseCode").IsUnique();
 
             entity.Property(e => e.CourseCode)
                 .IsRequired()
                 .HasMaxLength(20);
-            entity.Property(e => e.CreatedAt)
+            entity.Property(e => e.CreatedAtUtc)
                 .HasPrecision(0)
                 .HasDefaultValueSql("(sysutcdatetime())");
             entity.Property(e => e.Credits)
@@ -165,18 +245,30 @@ public partial class SmsContext : DbContext
             entity.Property(e => e.Title)
                 .IsRequired()
                 .HasMaxLength(200);
-            entity.Property(e => e.UpdatedAt).HasPrecision(0);
+            entity.Property(e => e.UpdatedAtUtc).HasPrecision(0);
+
+            entity.HasOne(d => d.CreatedByUser).WithMany(p => p.CourseCreatedByUsers)
+                .HasForeignKey(d => d.CreatedByUserId)
+                .HasConstraintName("FK_Course_CreatedBy");
+
+            entity.HasOne(d => d.UpdatedByUser).WithMany(p => p.CourseUpdatedByUsers)
+                .HasForeignKey(d => d.UpdatedByUserId)
+                .HasConstraintName("FK_Course_UpdatedBy");
         });
 
         modelBuilder.Entity<Enrollment>(entity =>
         {
-            entity.HasKey(e => e.EnrollmentId).HasName("PK__Enrollme__7F68771BAC31CE1F");
+            entity.HasKey(e => e.EnrollmentId).HasName("PK__Enrollme__7F68771B940E0147");
 
-            entity.ToTable("Enrollment", "asms");
+            entity.ToTable("Enrollment");
+
+            entity.HasIndex(e => e.SectionId, "IX_Enrollment_Section");
+
+            entity.HasIndex(e => e.StudentId, "IX_Enrollment_Student");
 
             entity.HasIndex(e => new { e.StudentId, e.SectionId }, "UQ_Enrollment").IsUnique();
 
-            entity.Property(e => e.CreatedAt)
+            entity.Property(e => e.CreatedAtUtc)
                 .HasPrecision(0)
                 .HasDefaultValueSql("(sysutcdatetime())");
             entity.Property(e => e.EnrollDate)
@@ -190,29 +282,42 @@ public partial class SmsContext : DbContext
                 .IsRequired()
                 .HasMaxLength(20)
                 .HasDefaultValue("Active");
-            entity.Property(e => e.UpdatedAt).HasPrecision(0);
+            entity.Property(e => e.UpdatedAtUtc).HasPrecision(0);
+
+            entity.HasOne(d => d.CreatedByUser).WithMany(p => p.EnrollmentCreatedByUsers)
+                .HasForeignKey(d => d.CreatedByUserId)
+                .HasConstraintName("FK_Enr_CreatedBy");
 
             entity.HasOne(d => d.Section).WithMany(p => p.Enrollments)
                 .HasForeignKey(d => d.SectionId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_Enrollment_Section");
+                .HasConstraintName("FK_Enr_Section");
 
             entity.HasOne(d => d.Student).WithMany(p => p.Enrollments)
                 .HasForeignKey(d => d.StudentId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_Enrollment_Student");
+                .HasConstraintName("FK_Enr_Student");
+
+            entity.HasOne(d => d.UpdatedByUser).WithMany(p => p.EnrollmentUpdatedByUsers)
+                .HasForeignKey(d => d.UpdatedByUserId)
+                .HasConstraintName("FK_Enr_UpdatedBy");
         });
 
         modelBuilder.Entity<Grade>(entity =>
         {
-            entity.HasKey(e => e.GradeId).HasName("PK__Grade__54F87A57E26F5D68");
+            entity.HasKey(e => e.GradeId).HasName("PK__Grade__54F87A571D4521DA");
 
-            entity.ToTable("Grade", "asms");
+            entity.ToTable("Grade");
+
+            entity.HasIndex(e => e.StudentId, "IX_Grade_Student");
 
             entity.HasIndex(e => new { e.AssessmentId, e.StudentId }, "UQ_Grade").IsUnique();
 
+            entity.Property(e => e.CreatedAtUtc)
+                .HasPrecision(0)
+                .HasDefaultValueSql("(sysutcdatetime())");
             entity.Property(e => e.Feedback).HasMaxLength(1000);
-            entity.Property(e => e.GradedAt)
+            entity.Property(e => e.GradedAtUtc)
                 .HasPrecision(0)
                 .HasDefaultValueSql("(sysutcdatetime())");
             entity.Property(e => e.PointsEarned).HasColumnType("decimal(6, 2)");
@@ -220,25 +325,38 @@ public partial class SmsContext : DbContext
                 .IsRequired()
                 .IsRowVersion()
                 .IsConcurrencyToken();
+            entity.Property(e => e.UpdatedAtUtc).HasPrecision(0);
 
             entity.HasOne(d => d.Assessment).WithMany(p => p.Grades)
                 .HasForeignKey(d => d.AssessmentId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_Grade_Assessment");
+                .HasConstraintName("FK_Grade_Asmt");
+
+            entity.HasOne(d => d.CreatedByUser).WithMany(p => p.GradeCreatedByUsers)
+                .HasForeignKey(d => d.CreatedByUserId)
+                .HasConstraintName("FK_Grade_CreatedBy");
 
             entity.HasOne(d => d.Student).WithMany(p => p.Grades)
                 .HasForeignKey(d => d.StudentId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_Grade_Student");
+                .HasConstraintName("FK_Grade_Stud");
+
+            entity.HasOne(d => d.UpdatedByUser).WithMany(p => p.GradeUpdatedByUsers)
+                .HasForeignKey(d => d.UpdatedByUserId)
+                .HasConstraintName("FK_Grade_UpdatedBy");
         });
 
         modelBuilder.Entity<Guardian>(entity =>
         {
-            entity.HasKey(e => e.GuardianId).HasName("PK__Guardian__0A5E1A9BAA214F5B");
+            entity.HasKey(e => e.GuardianId).HasName("PK__Guardian__0A5E1A9B4E08EF66");
 
-            entity.ToTable("Guardian", "asms");
+            entity.ToTable("Guardian");
 
-            entity.Property(e => e.CreatedAt)
+            entity.HasIndex(e => e.UserId, "UX_Guardian_UserId_OneToOne")
+                .IsUnique()
+                .HasFilter("([UserId] IS NOT NULL)");
+
+            entity.Property(e => e.CreatedAtUtc)
                 .HasPrecision(0)
                 .HasDefaultValueSql("(sysutcdatetime())");
             entity.Property(e => e.Email).HasMaxLength(256);
@@ -254,18 +372,62 @@ public partial class SmsContext : DbContext
                 .IsRequired()
                 .IsRowVersion()
                 .IsConcurrencyToken();
-            entity.Property(e => e.UpdatedAt).HasPrecision(0);
+            entity.Property(e => e.UpdatedAtUtc).HasPrecision(0);
+
+            entity.HasOne(d => d.CreatedByUser).WithMany(p => p.GuardianCreatedByUsers)
+                .HasForeignKey(d => d.CreatedByUserId)
+                .HasConstraintName("FK_Guardian_CreatedBy");
+
+            entity.HasOne(d => d.UpdatedByUser).WithMany(p => p.GuardianUpdatedByUsers)
+                .HasForeignKey(d => d.UpdatedByUserId)
+                .HasConstraintName("FK_Guardian_UpdatedBy");
+
+            entity.HasOne(d => d.User).WithOne(p => p.GuardianUser)
+                .HasForeignKey<Guardian>(d => d.UserId)
+                .HasConstraintName("FK_Guardian_User");
+        });
+
+        modelBuilder.Entity<Role>(entity =>
+        {
+            entity.ToTable("Role");
+
+            entity.HasIndex(e => e.Name, "UQ_Role_Name").IsUnique();
+
+            entity.Property(e => e.CreatedAtUtc)
+                .HasPrecision(0)
+                .HasDefaultValueSql("(sysutcdatetime())");
+            entity.Property(e => e.IsActive).HasDefaultValue(true);
+            entity.Property(e => e.Name)
+                .IsRequired()
+                .HasMaxLength(50);
+            entity.Property(e => e.RowVersion)
+                .IsRequired()
+                .IsRowVersion()
+                .IsConcurrencyToken();
+            entity.Property(e => e.UpdatedAtUtc).HasPrecision(0);
+
+            entity.HasOne(d => d.CreatedByUser).WithMany(p => p.RoleCreatedByUsers)
+                .HasForeignKey(d => d.CreatedByUserId)
+                .HasConstraintName("FK_Role_CreatedBy");
+
+            entity.HasOne(d => d.UpdatedByUser).WithMany(p => p.RoleUpdatedByUsers)
+                .HasForeignKey(d => d.UpdatedByUserId)
+                .HasConstraintName("FK_Role_UpdatedBy");
         });
 
         modelBuilder.Entity<Staff>(entity =>
         {
-            entity.HasKey(e => e.StaffId).HasName("PK__Staff__96D4AB174CB4FC16");
+            entity.HasKey(e => e.StaffId).HasName("PK__Staff__96D4AB173733483B");
 
-            entity.ToTable("Staff", "asms");
+            entity.HasIndex(e => e.Email, "IX_Staff_Email").HasFilter("([Email] IS NOT NULL)");
 
             entity.HasIndex(e => e.StaffCode, "UQ_Staff_StaffCode").IsUnique();
 
-            entity.Property(e => e.CreatedAt)
+            entity.HasIndex(e => e.UserId, "UX_Staff_UserId_OneToOne")
+                .IsUnique()
+                .HasFilter("([UserId] IS NOT NULL)");
+
+            entity.Property(e => e.CreatedAtUtc)
                 .HasPrecision(0)
                 .HasDefaultValueSql("(sysutcdatetime())");
             entity.Property(e => e.Email).HasMaxLength(256);
@@ -277,10 +439,6 @@ public partial class SmsContext : DbContext
                 .IsRequired()
                 .HasMaxLength(100);
             entity.Property(e => e.Phone).HasMaxLength(30);
-            entity.Property(e => e.Role)
-                .IsRequired()
-                .HasMaxLength(50)
-                .HasDefaultValue("Teacher");
             entity.Property(e => e.RowVersion)
                 .IsRequired()
                 .IsRowVersion()
@@ -288,18 +446,37 @@ public partial class SmsContext : DbContext
             entity.Property(e => e.StaffCode)
                 .IsRequired()
                 .HasMaxLength(20);
-            entity.Property(e => e.UpdatedAt).HasPrecision(0);
+            entity.Property(e => e.Title).HasMaxLength(80);
+            entity.Property(e => e.UpdatedAtUtc).HasPrecision(0);
+
+            entity.HasOne(d => d.CreatedByUser).WithMany(p => p.StaffCreatedByUsers)
+                .HasForeignKey(d => d.CreatedByUserId)
+                .HasConstraintName("FK_Staff_CreatedBy");
+
+            entity.HasOne(d => d.UpdatedByUser).WithMany(p => p.StaffUpdatedByUsers)
+                .HasForeignKey(d => d.UpdatedByUserId)
+                .HasConstraintName("FK_Staff_UpdatedBy");
+
+            entity.HasOne(d => d.User).WithOne(p => p.StaffUser)
+                .HasForeignKey<Staff>(d => d.UserId)
+                .HasConstraintName("FK_Staff_User");
         });
 
         modelBuilder.Entity<Student>(entity =>
         {
-            entity.HasKey(e => e.StudentId).HasName("PK__Student__32C52B992CFCF61F");
+            entity.HasKey(e => e.StudentId).HasName("PK__Student__32C52B998D071502");
 
-            entity.ToTable("Student", "asms");
+            entity.ToTable("Student");
+
+            entity.HasIndex(e => e.Email, "IX_Student_Email").HasFilter("([Email] IS NOT NULL)");
 
             entity.HasIndex(e => e.RollNumber, "UQ_Student_RollNumber").IsUnique();
 
-            entity.Property(e => e.CreatedAt)
+            entity.HasIndex(e => e.UserId, "UX_Student_UserId_OneToOne")
+                .IsUnique()
+                .HasFilter("([UserId] IS NOT NULL)");
+
+            entity.Property(e => e.CreatedAtUtc)
                 .HasPrecision(0)
                 .HasDefaultValueSql("(sysutcdatetime())");
             entity.Property(e => e.Dob)
@@ -322,42 +499,67 @@ public partial class SmsContext : DbContext
                 .IsRequired()
                 .IsRowVersion()
                 .IsConcurrencyToken();
-            entity.Property(e => e.UpdatedAt).HasPrecision(0);
+            entity.Property(e => e.UpdatedAtUtc).HasPrecision(0);
+
+            entity.HasOne(d => d.CreatedByUser).WithMany(p => p.StudentCreatedByUsers)
+                .HasForeignKey(d => d.CreatedByUserId)
+                .HasConstraintName("FK_Student_CreatedBy");
+
+            entity.HasOne(d => d.UpdatedByUser).WithMany(p => p.StudentUpdatedByUsers)
+                .HasForeignKey(d => d.UpdatedByUserId)
+                .HasConstraintName("FK_Student_UpdatedBy");
+
+            entity.HasOne(d => d.User).WithOne(p => p.StudentUser)
+                .HasForeignKey<Student>(d => d.UserId)
+                .HasConstraintName("FK_Student_User");
         });
 
         modelBuilder.Entity<StudentGuardian>(entity =>
         {
-            entity.HasKey(e => e.StudentGuardianId).HasName("PK__StudentG__D9FA2CD850357E74");
+            entity.HasKey(e => e.StudentGuardianId).HasName("PK__StudentG__D9FA2CD8FBA94790");
 
-            entity.ToTable("StudentGuardian", "asms");
+            entity.ToTable("StudentGuardian");
 
             entity.HasIndex(e => new { e.StudentId, e.GuardianId }, "UQ_StudentGuardian").IsUnique();
 
-            entity.Property(e => e.CreatedAt)
+            entity.Property(e => e.CreatedAtUtc)
                 .HasPrecision(0)
                 .HasDefaultValueSql("(sysutcdatetime())");
             entity.Property(e => e.Relationship)
                 .IsRequired()
                 .HasMaxLength(30);
+            entity.Property(e => e.RowVersion)
+                .IsRequired()
+                .IsRowVersion()
+                .IsConcurrencyToken();
+            entity.Property(e => e.UpdatedAtUtc).HasPrecision(0);
+
+            entity.HasOne(d => d.CreatedByUser).WithMany(p => p.StudentGuardianCreatedByUsers)
+                .HasForeignKey(d => d.CreatedByUserId)
+                .HasConstraintName("FK_SG_CreatedBy");
 
             entity.HasOne(d => d.Guardian).WithMany(p => p.StudentGuardians)
                 .HasForeignKey(d => d.GuardianId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_StudentGuardian_Guardian");
+                .HasConstraintName("FK_SG_Guardian");
 
             entity.HasOne(d => d.Student).WithMany(p => p.StudentGuardians)
                 .HasForeignKey(d => d.StudentId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_StudentGuardian_Student");
+                .HasConstraintName("FK_SG_Student");
+
+            entity.HasOne(d => d.UpdatedByUser).WithMany(p => p.StudentGuardianUpdatedByUsers)
+                .HasForeignKey(d => d.UpdatedByUserId)
+                .HasConstraintName("FK_SG_UpdatedBy");
         });
 
         modelBuilder.Entity<Term>(entity =>
         {
-            entity.HasKey(e => e.TermId).HasName("PK__Term__410A21A5224B9683");
+            entity.HasKey(e => e.TermId).HasName("PK__Term__410A21A5CE6B9E58");
 
-            entity.ToTable("Term", "asms");
+            entity.ToTable("Term");
 
-            entity.Property(e => e.CreatedAt)
+            entity.Property(e => e.CreatedAtUtc)
                 .HasPrecision(0)
                 .HasDefaultValueSql("(sysutcdatetime())");
             entity.Property(e => e.EndDate).HasColumnType("date");
@@ -370,7 +572,58 @@ public partial class SmsContext : DbContext
                 .IsRowVersion()
                 .IsConcurrencyToken();
             entity.Property(e => e.StartDate).HasColumnType("date");
-            entity.Property(e => e.UpdatedAt).HasPrecision(0);
+            entity.Property(e => e.UpdatedAtUtc).HasPrecision(0);
+
+            entity.HasOne(d => d.CreatedByUser).WithMany(p => p.TermCreatedByUsers)
+                .HasForeignKey(d => d.CreatedByUserId)
+                .HasConstraintName("FK_Term_CreatedBy");
+
+            entity.HasOne(d => d.UpdatedByUser).WithMany(p => p.TermUpdatedByUsers)
+                .HasForeignKey(d => d.UpdatedByUserId)
+                .HasConstraintName("FK_Term_UpdatedBy");
+        });
+
+        modelBuilder.Entity<UserRole>(entity =>
+        {
+            entity.HasKey(e => new { e.UserId, e.RoleId });
+
+            entity.ToTable("UserRole");
+
+            entity.Property(e => e.AssignedAtUtc)
+                .HasPrecision(0)
+                .HasDefaultValueSql("(sysutcdatetime())");
+            entity.Property(e => e.UpdatedAtUtc).HasPrecision(0);
+
+            entity.HasOne(d => d.CreatedByUser).WithMany(p => p.UserRoleCreatedByUsers)
+                .HasForeignKey(d => d.CreatedByUserId)
+                .HasConstraintName("FK_UserRole_CreatedBy");
+
+            entity.HasOne(d => d.Role).WithMany(p => p.UserRoles)
+                .HasForeignKey(d => d.RoleId)
+                .HasConstraintName("FK_UserRole_Role");
+
+            entity.HasOne(d => d.UpdatedByUser).WithMany(p => p.UserRoleUpdatedByUsers)
+                .HasForeignKey(d => d.UpdatedByUserId)
+                .HasConstraintName("FK_UserRole_UpdatedBy");
+
+            entity.HasOne(d => d.User).WithMany(p => p.UserRoleUsers)
+                .HasForeignKey(d => d.UserId)
+                .HasConstraintName("FK_UserRole_User");
+        });
+
+        modelBuilder.Entity<VwUserPersonLink>(entity =>
+        {
+            entity
+                .HasNoKey()
+                .ToView("vw_UserPersonLinks");
+
+            entity.Property(e => e.Email).HasMaxLength(256);
+            entity.Property(e => e.Roles).HasMaxLength(4000);
+            entity.Property(e => e.RollNumber).HasMaxLength(30);
+            entity.Property(e => e.StaffCode).HasMaxLength(20);
+            entity.Property(e => e.Username)
+                .IsRequired()
+                .HasMaxLength(100);
         });
 
         OnModelCreatingPartial(modelBuilder);
