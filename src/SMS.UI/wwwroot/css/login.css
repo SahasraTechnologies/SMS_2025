@@ -1,0 +1,58 @@
+﻿/* Blurred Image */
+.blurred-image {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    background-image: url('/images/bg/school.png');
+    background-size: cover;
+    background-position: center;
+    filter: blur(8px);
+    -webkit-filter: blur(8px);
+    z-index: 1;
+}
+
+    /* Blue Overlay */
+    .blurred-image .overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 255, 0.3); /* Semi-transparent blue */
+        z-index: 2;
+    }
+
+/* Login Box Styling */
+.login-box {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(255, 255, 255, 0.9); /* Semi-transparent white */
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.25); /* Optional shadow */
+    z-index: 9999; /* Higher than background and overlay */
+    width: 350px; /* Fixed width for consistency */
+}
+
+/* Centered Text */
+.login-logo a {
+    color: #333;
+    text-decoration: none;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+/* Input Fields */
+.form-control {
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+/* Button Styling */
+.btn-primary {
+    background-color: #007bff;
+    border-color: #007bff;
+    border-radius: 4px;
+}
