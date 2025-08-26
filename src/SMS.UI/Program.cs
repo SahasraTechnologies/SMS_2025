@@ -1,7 +1,18 @@
+using SMS.Services;
+using SMS.Services.Interfaces;
+
 var builder = WebApplication.CreateBuilder(args);
+
+// Register services in a centralized location
+builder.Services.AddScoped<IAppUserService, AppUserService>();
+
+
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+
+
 
 var app = builder.Build();
 
