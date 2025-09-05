@@ -1,9 +1,11 @@
 using System.Diagnostics;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SMS.UI.Models;
 
 namespace SMS.UI.Controllers
 {
+  
     public class HomeController : BaseController
     {
         private readonly ILogger<HomeController> _logger;

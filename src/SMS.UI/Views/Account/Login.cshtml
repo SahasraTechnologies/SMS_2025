@@ -11,7 +11,7 @@
             <div class="login-logo">
                @* <img src="~/images/bg/school.png" /> *@
             </div>
-            <form method="post" asp-action="Login">
+            <form method="post" asp-controller="Account" asp-action="Login" >
                 <span asp-validation-for="EmailOrUserName" class="text-danger"></span>
                 <div class="input-group mb-5">
                     <label asp-for="EmailOrUserName" class="form-label"></label>

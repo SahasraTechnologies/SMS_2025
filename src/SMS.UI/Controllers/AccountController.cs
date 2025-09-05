@@ -1,19 +1,30 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Mvc;
 using SMS.Models.Login;
 using SMS.Services;
 using SMS.Services.Interfaces;
-
+using System.Security.Claims;
+using System.Security.Principal;
 namespace SMS.UI.Controllers
 {
-    public class AccountController : BaseController
+    public class AccountController : Controller
     {
         IAppUserService _userService;
+    
         public AccountController(IAppUserService appUserService) 
         { 
             _userService = appUserService;
         }
+        [HttpGet]
         public IActionResult Login()
         {
+            // Check if the user is authenticated
+            if (User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("Index", "Home");
+            }
+
             return View();
         }
         //[HttpPost]
@@ -31,11 +42,49 @@ namespace SMS.UI.Controllers
                 bool isValidUser= _userService.ValidateUser(userdto);
 
                 if (isValidUser) 
-                { 
+                {
+                    //Get User Info From Database
+
+                    // Create claims
+                    var claims = new List<Claim>
+                    {
+                        new Claim(ClaimTypes.Upn, "1000"),
+                        new Claim(ClaimTypes.Name, "Team Sahasra"),
+                        new Claim(ClaimTypes.Email, "hello@sahasra.io"),
+                        new Claim(ClaimTypes.GivenName, "Team Sahasra"),
+                        new Claim(ClaimTypes.Role, "Admin") // Use dynamic role if available
+                    };
+                    // Create claims identity
+                    var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                    var principal = new ClaimsPrincipal(claimsIdentity);
+                    // Configure authentication properties
+                    var authProperties = new AuthenticationProperties
+                    {
+                        IsPersistent = true, // Persistent across sessions
+                        ExpiresUtc = DateTimeOffset.UtcNow.AddMinutes(30) // Expiry
+                    };
+
+                    // Sign in the user
+                    HttpContext.SignInAsync(
+                        CookieAuthenticationDefaults.AuthenticationScheme,
+                        principal,
+                        authProperties
+                    );
+
                     return RedirectToAction("Index","Home");
                 }
             }
             return View(userdto);
+        }
+
+
+        [HttpPost]
+        public IActionResult Logout()
+        {
+            //HttpContext.Session.Remove("User");
+            //HttpContext.Session.Clear();
+            HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            return RedirectToAction("Login", "Account");
         }
     }
 }
