@@ -34,24 +34,24 @@ namespace SMS.UI.Controllers
         //}
 
         [HttpPost]
-        public IActionResult Login(UserDto userdto)
+        public IActionResult Login(UserRequestDto userdto)
         {
             if (ModelState.IsValid)
             {
                 //AppUserService _userService = new AppUserService();
-                bool isValidUser= _userService.ValidateUser(userdto);
+                var userData = _userService.ValidateUser(userdto);
 
-                if (isValidUser) 
+                if (userData.Success) 
                 {
                     //Get User Info From Database
 
                     // Create claims
                     var claims = new List<Claim>
                     {
-                        new Claim(ClaimTypes.Upn, "1000"),
-                        new Claim(ClaimTypes.Name, "Team Sahasra"),
-                        new Claim(ClaimTypes.Email, "hello@sahasra.io"),
-                        new Claim(ClaimTypes.GivenName, "Team Sahasra"),
+                        new Claim(ClaimTypes.Upn, userData.Data.Id.ToString()),
+                        new Claim(ClaimTypes.Name, userData.Data.UserName),
+                        new Claim(ClaimTypes.Email, userData.Data.Email),
+                        new Claim(ClaimTypes.GivenName, userData.Data.UserName),
                         new Claim(ClaimTypes.Role, "Admin") // Use dynamic role if available
                     };
                     // Create claims identity

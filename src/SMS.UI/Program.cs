@@ -1,9 +1,16 @@
+using Microsoft.EntityFrameworkCore;
+using SMS.Entities.Models;
 using SMS.Services;
 using SMS.Services.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Register services in a centralized location
+
+// Register DbContext with the connection string
+builder.Services.AddDbContext<SmsContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("SmsConnection")));
+
 builder.Services.AddScoped<IAppUserService, AppUserService>();
 
 
