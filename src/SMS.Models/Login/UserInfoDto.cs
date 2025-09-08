@@ -14,5 +14,15 @@ namespace SMS.Models.Login
         public string Role { get; set; }
         public string Phone { get; set; }
 
+        public UserInfoDto() { }
+        public UserInfoDto(int id, string userName, string email, string role, string phone) 
+        { 
+            Id = id;
+            UserName = userName;
+            Email = email;
+            Role = role;
+            Phone = phone;
+        }
+
     }
 }

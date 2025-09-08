@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using SMS.Entities.Models;
+using SMS.Repo;
 using SMS.Services;
 using SMS.Services.Interfaces;
 
@@ -12,7 +13,7 @@ builder.Services.AddDbContext<SmsContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("SmsConnection")));
 
 builder.Services.AddScoped<IAppUserService, AppUserService>();
-
+builder.Services.AddScoped(typeof(IBaseRepo<>), typeof(BaseRepo<>));
 
 
 // Add services to the container.

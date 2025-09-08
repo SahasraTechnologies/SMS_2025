@@ -41,7 +41,7 @@ namespace SMS.UI.Controllers
                 //AppUserService _userService = new AppUserService();
                 var userData = _userService.ValidateUser(userdto);
 
-                if (userData.Success) 
+                if (userData.IsSuccess) 
                 {
                     //Get User Info From Database
 

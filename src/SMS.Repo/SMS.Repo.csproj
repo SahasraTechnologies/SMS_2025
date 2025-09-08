@@ -9,8 +9,6 @@
   <ItemGroup>
     <ProjectReference Include="..\SMS.Core\SMS.Core.csproj" />
     <ProjectReference Include="..\SMS.Entities\SMS.Entities.csproj" />
-    <ProjectReference Include="..\SMS.Models\SMS.Models.csproj" />
-    <ProjectReference Include="..\SMS.Repo\SMS.Repo.csproj" />
   </ItemGroup>
 
 </Project>
