@@ -8,9 +8,24 @@ namespace SMS.Core
 {
     public class SmsResponseDto<T>
     {
-        public bool Success { get; set; }
+        public bool IsSuccess { get; set; }
         public T? Data { get; set; }
         public string Message { get; set; } = "Success";
         public List<string>? Errors { get; set; }
+
+        public static SmsResponseDto<T> Success(T data, string message = "Success") => new()
+        {
+            IsSuccess = true,
+            Message = message,
+            Data = data
+        };
+
+        public static SmsResponseDto<T> Fail(string message, List<string>? errors = null) => new()
+        {
+            IsSuccess = false,
+            Message = message,
+            Errors = errors,
+            Data = default
+        };
     }
 }
