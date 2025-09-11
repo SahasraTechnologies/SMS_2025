@@ -76,7 +76,19 @@ namespace SMS.UI.Controllers
             }
             return View(userdto);
         }
+        
+        
+        [HttpGet]
+        public  IActionResult ForgotPassword()
+        {
+            return View();
+        }
 
+        [HttpGet]
+        public IActionResult SignUp()
+        {
+            return View();
+        }
 
         [HttpPost]
         public IActionResult Logout()
