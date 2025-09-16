@@ -21,7 +21,28 @@
         @await Html.PartialAsync("_sidebar")
         <!--begin::App Main-->
         <main class="app-main">
-            @RenderBody()
+            <div class="app-content-header py-3 bg-light border-bottom">
+                <!--begin::Container-->
+                <div class="container-fluid">
+                    <!--begin::Row-->
+                    <div class="row align-items-center">
+                        <div class="col-sm-6">
+                            <h3 class="mb-0 d-flex align-items-center gap-2">
+                                @ViewData["PageName"]
+                            </h3>
+                        </div>
+                    </div>
+                    <!--end::Row-->
+                </div>
+                <!--end::Container-->
+            </div>
+            <div class="app-content">
+                <!--begin::Container-->
+                @RenderBody()
+                <!--end::Container-->
+            </div>
+            <!--end::App Content-->
+           
         </main>
         <!--end::App Main-->
         @await Html.PartialAsync("_Footer")
