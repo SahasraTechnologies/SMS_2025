@@ -1,1 +1,144 @@
-﻿<p>I am in UserList</p>
+﻿@model SMS.Models.ViewDto<SMS.Models.Login.UserInfoDto>
+<!--start::App Table-->
+<div class="app-content">
+    <!--begin::Container-->
+    <div class="container-fluid">
+        <!--begin::Row-->
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card mb-2 p-3">
+                    <table id="dtTblData" class="table table-striped display" style="width:100%"></table>
+                    <div id="customPagination"></div>
+                </div> <!-- /.card -->
+            </div> <!-- /.col -->
+        </div> <!--end::Row-->
+    </div> <!--end::Container-->
+</div>
+
+@section Scripts 
+{
+    <script>
+         //01. Onload
+         $(document).ready(function () {
+             //alert("Hai");
+             initlzTbl();
+         });
+
+          //02.initialize Table
+         function initlzTbl() {
+            const rawColumns = @Html.Raw(Json.Serialize(Model.Columns));
+            const data = @Html.Raw(Json.Serialize(Model.ListData));
+             //alert("Welcome!");
+            
+            const columns = [
+                // {
+                //     title: "Action",
+                //     data: null,
+                //     orderable: false,
+                //     searchable: false,
+                //     width: "10%",
+                //     // render: function (data, type, row) {
+                //     //     return `
+                //     //         <button class="btn btn-outline-warning btn-sm" onclick="fnEditData('${row.Id}')" title="Edit data">
+                //     //             <i class="bi bi-pencil-square"></i>
+                //     //         </button>
+                //     //         <button class="btn btn-danger btn-sm" onclick="fnDeleteData('${row.Id}')" title="Delete data">
+                //     //             <i class="bi bi-trash"></i>
+                //     //         </button>`;
+                //     // }
+                // },
+                ... rawColumns
+            ];
+
+            // Destroy and reinitialize if already present
+            if ($.fn.DataTable.isDataTable('#dtTblData')) {
+                $('#dtTblData').DataTable().destroy();
+                $('#dtTblData').empty();
+            }
+
+            // Initialize table with custom layout (no buttons initially)
+            const table = $('#dtTblData').DataTable({
+                columns: columns,
+                data: data,
+                paging: false,
+                searching: false,
+                ordering: false,
+                info: false,
+                autoWidth: true,
+                responsive: true,
+                // dom: "<'row'<'col-sm-6 dt-buttons-left'><'col-sm-6 dt-buttons-right text-end'>>" +
+                //      "<'row'<'col-sm-12'tr>>" +
+                //      "<'row'<'col-sm-5'i><'col-sm-7'p>>",
+                buttons: [] // Start empty
+            });
+
+            // // ➕ Add Customer button (left)
+            // const leftButtons = new $.fn.dataTable.Buttons(table, {
+            //     buttons: [
+
+            //     ]
+            // }).container().appendTo('.dt-buttons-left');
+            
+            // // 🔍 Append custom search box manually
+            // $(".dt-buttons-left").append(`
+            //     <div class="d-inline-flex align-items-center ms-2">
+            //         <input type="text" id="customSearchInput" class="form-control form-control-sm"
+            //             placeholder="Search..." style="width: 250px;" />
+            //             <span class="help-icon"><i class="fas fa-circle-question"></i>
+            //             <span class="tooltip-text">Supported search fields: Company, Address, Contact, Country, Email.</span>
+            //             </span>
+            //     </div>
+            // `);
+            //  // 📤 Export + 🔄 Clear Filters (right)
+            //  const rightButtons = new $.fn.dataTable.Buttons(table, {
+            //  buttons: [
+            //       {
+            //          text: '<i class="bi bi-plus-lg"></i> Add',
+            //          className: 'btn btn-primary btn-sm',
+            //          titleAttr: 'Add a new record', // ✅ Tooltip on hover
+            //          action: function () {
+            //              openAddPopup(AppLabels.AddCountry);
+            //          }
+            //      },
+            //      {
+            //          text: '<i class="bi bi-file-earmark-excel"></i>',
+            //          titleAttr: 'Export data to excel file', // ✅ Tooltip on hover
+            //          extend: 'excelHtml5',
+            //          className: 'btn btn-success btn-sm',
+            //          filename: () => `Country_Export_${getTimestampString()}`,
+            //          title: null,
+            //          exportOptions: {
+            //              columns: function (idx, data, node) {
+            //                  return ![0].includes(idx); // Skip Action column
+            //              }
+            //          }
+            //      }
+            //  ]
+            //  }).container().appendTo('.dt-buttons-right');
+           
+            getTblData();
+            
+        }
+
+         function getTblData()
+         {
+             //alert('@Url.Action("GetListData", "AppUser")');
+                 $.ajax({
+                    url: '@Url.Action("GetListData", "AppUser")',
+                    type: "POST",
+                    data: "",
+                    processData: false,
+                    contentType: "application/json",
+                        success: function (response) {
+                            //alert(JSON.stringify(response));
+                            //alert(JSON.stringify(response.Data));
+                            var table = $('#dtTblData').DataTable();
+                                table.clear();
+                                table.rows.add(response.Data);
+                                table.draw();
+                        },
+            
+                    });
+         }
+    </script>
+}

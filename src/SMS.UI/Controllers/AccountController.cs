@@ -24,7 +24,7 @@ namespace SMS.UI.Controllers
             {
                 return RedirectToAction("Index", "Home");
             }
-
+            ViewData["PageName"] = "Login";
             return View();
         }
         //[HttpPost]
