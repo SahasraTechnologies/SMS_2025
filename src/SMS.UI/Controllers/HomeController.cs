@@ -17,6 +17,7 @@ namespace SMS.UI.Controllers
 
         public IActionResult Index()
         {
+            ViewData["PageName"] = "Dashboard";
             return View();
         }
 

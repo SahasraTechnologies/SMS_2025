@@ -17,8 +17,12 @@ builder.Services.AddScoped(typeof(IBaseRepo<>), typeof(BaseRepo<>));
 
 
 // Add services to the container.
-builder.Services.AddControllersWithViews();
-
+//builder.Services.AddControllersWithViews();
+builder.Services.AddControllersWithViews()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.PropertyNamingPolicy = null; // Disable camelCase
+    });
 // Configure cookie authentication
 builder.Services.AddAuthentication("Cookies")
     .AddCookie("Cookies", options =>

@@ -24,7 +24,7 @@ namespace SMS.UI.Controllers
             {
                 return RedirectToAction("Index", "Home");
             }
-
+            ViewData["PageName"] = "Login";
             return View();
         }
         //[HttpPost]
@@ -76,7 +76,19 @@ namespace SMS.UI.Controllers
             }
             return View(userdto);
         }
+        
+        
+        [HttpGet]
+        public  IActionResult ForgotPassword()
+        {
+            return View();
+        }
 
+        [HttpGet]
+        public IActionResult SignUp()
+        {
+            return View();
+        }
 
         [HttpPost]
         public IActionResult Logout()

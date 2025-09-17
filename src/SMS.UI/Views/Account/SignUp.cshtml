@@ -1,0 +1,68 @@
+﻿@model SMS.Models.Login.UserRequestDto;
+@{
+    Layout = "_LayoutLogin";
+}
+
+<div class="login-box">
+    <div class="login-logo">
+        <img src="~/images/siteimages/st_new.png" style="max-width:160px;" />
+    </div>
+    <!-- /.register-logo -->
+
+    <div class="card">
+        <div class="card-body register-card-body">
+            <p class="register-box-msg">Register a new membership</p>
+
+            <form asp-action="SignUp" asp-controller="Account" method="post">
+                <!-- Full Name -->
+                <div class="mb-3">
+                    <div class="input-group">
+                        <input asp-for="EmailOrUserName" type="text" class="form-control" placeholder="Full Name" />
+                        <span class="input-group-text"><i class="bi bi-person"></i></span>
+                    </div>
+                    <span asp-validation-for="EmailOrUserName" class="text-danger"></span>
+                </div>
+
+                <!-- Email -->
+                <div class="mb-3">
+                    <div class="input-group">
+                        <input asp-for="EmailOrUserName" type="email" class="form-control" placeholder="Email" />
+                        <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+                    </div>
+                    <span asp-validation-for="EmailOrUserName" class="text-danger"></span>
+                </div>
+
+                <!-- Password -->
+                <div class="mb-3">
+                    <div class="input-group">
+                        <input asp-for="Password" type="password" class="form-control" placeholder="Password" />
+                        <span class="input-group-text"><i class="bi bi-lock-fill"></i></span>
+                    </div>
+                    <span asp-validation-for="Password" class="text-danger"></span>
+                </div>
+
+                <!-- Terms + Button -->
+                <div class="row mb-3">
+                    <div class="col-8">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="termsCheck" required />
+                            <label class="form-check-label" for="termsCheck">
+                                I agree to the <a href="#">terms</a>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-4 d-grid">
+                        <button type="submit" class="btn btn-primary">Register</button>
+                    </div>
+                </div>
+            </form>
+
+            <!-- Login link -->
+            <p class="mb-0">
+                <a asp-action="Login" asp-controller="Account" class="text-center">
+                    I already have a membership
+                </a>
+            </p>
+        </div>
+    </div>
+</div>
