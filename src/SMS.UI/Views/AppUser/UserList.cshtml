@@ -1,4 +1,4 @@
-﻿@model SMS.Models.ViewDto<SMS.Models.Login.UserInfoDto>
+﻿@model ViewDto<UserInfoDto>
 <!--start::App Table-->
 <div class="app-content">
     <!--begin::Container-->
@@ -20,7 +20,7 @@
     <script>
          //01. Onload
          $(document).ready(function () {
-             //alert("Hai");
+             alert("Hai");
              initlzTbl();
          });
 
@@ -28,7 +28,7 @@
          function initlzTbl() {
             const rawColumns = @Html.Raw(Json.Serialize(Model.Columns));
             const data = @Html.Raw(Json.Serialize(Model.ListData));
-             //alert("Welcome!");
+             alert("Welcome!");
             
             const columns = [
                 // {
@@ -122,7 +122,7 @@
 
          function getTblData()
          {
-             //alert('@Url.Action("GetListData", "AppUser")');
+             alert('@Url.Action("GetListData", "AppUser")');
                  $.ajax({
                     url: '@Url.Action("GetListData", "AppUser")',
                     type: "POST",

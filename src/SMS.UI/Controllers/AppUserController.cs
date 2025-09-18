@@ -11,12 +11,15 @@ namespace SMS.UI.Controllers
         public IActionResult UserList()
         {
             ViewData["PageName"] = "Application Users";
-            var response = new ViewDto<UserInfoDto>
-            {
-                Columns = DataTableHelper.GetDataTableColumns<UserInfoDto>(),
-                //Data = new UserInfoDto(), // Represents the form model
-                Data = new UserInfoDto(1, "krishna", "krishna@example.com", "Admin", "9876543210")
-            };
+            ViewDto<UserInfoDto> response = new ViewDto<UserInfoDto>();
+            response.Columns = DataTableHelper.GetDataTableColumns<UserInfoDto>();
+            response.Data = new UserInfoDto();
+            //var response = new ViewDto<UserInfoDto>
+            //{
+            //    Columns = DataTableHelper.GetDataTableColumns<UserInfoDto>(),
+            //    //Data = new UserInfoDto(), // Represents the form model
+            //    Data = new UserInfoDto(1, "krishna", "krishna@example.com", "Admin", "9876543210")
+            //};
             return View(response);
         }
 
